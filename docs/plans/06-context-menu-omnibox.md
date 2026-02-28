@@ -27,28 +27,28 @@ types/
 ```typescript
 // types/entry-points.ts
 
-type ContextMenuAction = 'ask' | 'summarize' | 'translate' | 'explain-code';
+type ContextMenuAction = 'ask' | 'summarize' | 'translate' | 'explain-code'
 
 interface ContextMenuEvent {
-  action: ContextMenuAction;
-  selectionText: string;
-  pageUrl: string;
-  pageTitle: string;
+	action: ContextMenuAction
+	selectionText: string
+	pageUrl: string
+	pageTitle: string
 }
 
 interface OmniboxCommand {
-  rawInput: string;
-  parsed: {
-    action?: string;             // first word if recognized (summarize, translate, etc.)
-    query: string;               // remaining text
-  };
+	rawInput: string
+	parsed: {
+		action?: string // first word if recognized (summarize, translate, etc.)
+		query: string // remaining text
+	}
 }
 
 interface PrefilledPrompt {
-  type: 'PREFILLED_PROMPT';
-  text: string;
-  autoSubmit: boolean;
-  source: 'context-menu' | 'omnibox';
+	type: 'PREFILLED_PROMPT'
+	text: string
+	autoSubmit: boolean
+	source: 'context-menu' | 'omnibox'
 }
 ```
 

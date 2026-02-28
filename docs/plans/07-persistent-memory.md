@@ -39,34 +39,34 @@ lib/
 // lib/memory/types.ts
 
 type MemoryCategory =
-  | 'preference'    // "User prefers dark mode", "User likes TypeScript"
-  | 'fact'          // "User works at Acme Corp", "User's name is Alex"
-  | 'project'       // "User is working on ChromeClaw extension"
-  | 'instruction'   // "User wants responses in bullet points"
-  | 'technical';    // "User's stack: React, Node.js, PostgreSQL"
+	| 'preference' // "User prefers dark mode", "User likes TypeScript"
+	| 'fact' // "User works at Acme Corp", "User's name is Alex"
+	| 'project' // "User is working on ChromeClaw extension"
+	| 'instruction' // "User wants responses in bullet points"
+	| 'technical' // "User's stack: React, Node.js, PostgreSQL"
 
 interface Memory {
-  id: string;
-  content: string;              // The fact itself, natural language
-  category: MemoryCategory;
-  source: {
-    conversationId: string;
-    messageId: string;
-  };
-  confidence: number;           // 0-1, how confident the extraction was
-  createdAt: number;
-  updatedAt: number;
-  active: boolean;              // user can deactivate without deleting
+	id: string
+	content: string // The fact itself, natural language
+	category: MemoryCategory
+	source: {
+		conversationId: string
+		messageId: string
+	}
+	confidence: number // 0-1, how confident the extraction was
+	createdAt: number
+	updatedAt: number
+	active: boolean // user can deactivate without deleting
 }
 
 interface MemoryExtractionPrompt {
-  recentMessages: Array<{ role: string; content: string }>;
-  existingMemories: Memory[];   // to avoid duplicates
+	recentMessages: Array<{ role: string; content: string }>
+	existingMemories: Memory[] // to avoid duplicates
 }
 
 interface MemoryInjection {
-  memories: Memory[];
-  formattedBlock: string;       // ready to insert into system prompt
+	memories: Memory[]
+	formattedBlock: string // ready to insert into system prompt
 }
 ```
 
@@ -76,6 +76,7 @@ interface MemoryInjection {
 2. **Implement `extractor.ts`**: After each assistant message, take the last 4-6 messages from the conversation. Build a short extraction prompt: "Extract any new facts about the user from this conversation. Return a JSON array of `{ content, category, confidence }`. Only include facts not already known." Pass `existingMemories` for deduplication. Use `generateObject()` from the AI SDK with a Zod schema for the output. Only store memories with confidence > 0.7.
 3. **Implement `store.ts`**: CRUD operations over the Dexie `memories` table. `addMemory(memory)`, `getActiveMemories()`, `updateMemory(id, updates)`, `deleteMemory(id)`, `searchMemories(query)` (text match on `content`).
 4. **Implement `injector.ts`**: `getMemoryBlock()` queries all active memories, groups by category, and formats them as a system prompt section:
+
    ```
    <user_profile>
    ## Preferences
@@ -89,6 +90,7 @@ interface MemoryInjection {
    - Stack: React, Node.js, PostgreSQL
    </user_profile>
    ```
+
 5. **Wire into the system prompt builder**: In `lib/ai/prompts.ts`, call `injector.getMemoryBlock()` and append it to the system prompt before each LLM call.
 6. **Wire extraction into the agent loop**: In `lib/agent/loop.ts`, after a complete assistant response, fire the extraction as a background task (non-blocking). Use a debounce or rate limit (extract at most once per conversation turn, skip if the conversation is very short).
 7. **Build `MemoryManager.tsx`**: Options page component listing all memories grouped by category. Each `MemoryItem` shows the content text, category badge, timestamp, and edit/delete buttons. Include a search bar for filtering. Add a "Clear All" button with confirmation.

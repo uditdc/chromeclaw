@@ -65,60 +65,60 @@ lib/
 ```typescript
 // types/chat.ts
 
-type Role = 'user' | 'assistant' | 'system' | 'tool';
+type Role = 'user' | 'assistant' | 'system' | 'tool'
 
 interface Message {
-  id: string;
-  conversationId: string;
-  role: Role;
-  content: string;
-  model?: string;
-  provider?: string;
-  toolCalls?: ToolCall[];
-  toolResults?: ToolResult[];
-  createdAt: number;
+	id: string
+	conversationId: string
+	role: Role
+	content: string
+	model?: string
+	provider?: string
+	toolCalls?: ToolCall[]
+	toolResults?: ToolResult[]
+	createdAt: number
 }
 
 interface Conversation {
-  id: string;
-  title: string;
-  messages: Message[];
-  model: string;
-  provider: string;
-  createdAt: number;
-  updatedAt: number;
+	id: string
+	title: string
+	messages: Message[]
+	model: string
+	provider: string
+	createdAt: number
+	updatedAt: number
 }
 
 interface LLMProvider {
-  id: string;  // 'anthropic' | 'openai' | 'google' | 'ollama' | 'openrouter'
-  name: string;
-  models: ModelConfig[];
-  apiKeyRequired: boolean;
+	id: string // 'anthropic' | 'openai' | 'google' | 'ollama' | 'openrouter'
+	name: string
+	models: ModelConfig[]
+	apiKeyRequired: boolean
 }
 
 interface ModelConfig {
-  id: string;  // e.g. 'claude-sonnet-4-5-20250929'
-  name: string;
-  providerId: string;
-  supportsVision: boolean;
-  supportsToolCalling: boolean;
-  maxTokens: number;
+	id: string // e.g. 'claude-sonnet-4-5-20250929'
+	name: string
+	providerId: string
+	supportsVision: boolean
+	supportsToolCalling: boolean
+	maxTokens: number
 }
 
 interface ChatRequest {
-  type: 'CHAT_REQUEST';
-  conversationId: string;
-  messages: Message[];
-  model: string;
-  provider: string;
-  systemPrompt: string;
+	type: 'CHAT_REQUEST'
+	conversationId: string
+	messages: Message[]
+	model: string
+	provider: string
+	systemPrompt: string
 }
 
 interface ChatStreamChunk {
-  type: 'CHAT_STREAM_CHUNK';
-  conversationId: string;
-  delta: string;
-  done: boolean;
+	type: 'CHAT_STREAM_CHUNK'
+	conversationId: string
+	delta: string
+	done: boolean
 }
 ```
 

@@ -4,9 +4,9 @@
 
 ---
 
-*Product Requirements Document — Version 1.0 — February 2026*
+_Product Requirements Document — Version 1.0 — February 2026_
 
-*CONFIDENTIAL — For internal use only*
+_CONFIDENTIAL — For internal use only_
 
 ---
 
@@ -33,7 +33,7 @@ ChromeClaw solves this by shifting the runtime into the browser extension sandbo
 
 ## 3. Product Vision
 
-> *For **developers, power users, and knowledge workers** who want a personal AI agent that acts on their behalf in the browser, **ChromeClaw** is a Chrome extension that provides autonomous, tool-calling AI assistance with native page awareness — without requiring a server, terminal, or any infrastructure.*
+> _For **developers, power users, and knowledge workers** who want a personal AI agent that acts on their behalf in the browser, **ChromeClaw** is a Chrome extension that provides autonomous, tool-calling AI assistance with native page awareness — without requiring a server, terminal, or any infrastructure._
 
 **Core Principles:**
 
@@ -66,24 +66,24 @@ ChromeClaw solves this by shifting the runtime into the browser extension sandbo
 
 ### 5.1 Extension Components
 
-| Component | Role | Chrome API |
-|---|---|---|
+| Component                      | Role                                                                        | Chrome API                                    |
+| ------------------------------ | --------------------------------------------------------------------------- | --------------------------------------------- |
 | Service Worker (background.js) | Agent gateway: session management, LLM API calls, tool routing, message bus | chrome.runtime, chrome.alarms, chrome.storage |
-| Side Panel | Primary chat UI, streaming responses, skill output rendering | chrome.sidePanel |
-| Content Scripts | Page context extraction, DOM interaction, form filling, element selection | DOM APIs, chrome.runtime messaging |
-| Options Page | Configuration: API keys, model selection, skill management, preferences | chrome.storage.sync |
-| Context Menu | Right-click actions: "Ask AI about this", "Summarize selection" | chrome.contextMenus |
-| Omnibox | Quick commands via address bar: "cc: summarize this page" | chrome.omnibox |
+| Side Panel                     | Primary chat UI, streaming responses, skill output rendering                | chrome.sidePanel                              |
+| Content Scripts                | Page context extraction, DOM interaction, form filling, element selection   | DOM APIs, chrome.runtime messaging            |
+| Options Page                   | Configuration: API keys, model selection, skill management, preferences     | chrome.storage.sync                           |
+| Context Menu                   | Right-click actions: "Ask AI about this", "Summarize selection"             | chrome.contextMenus                           |
+| Omnibox                        | Quick commands via address bar: "cc: summarize this page"                   | chrome.omnibox                                |
 
 ### 5.2 Data Architecture
 
-| Store | Technology | Contents |
-|---|---|---|
-| Conversation History | IndexedDB (via Dexie.js) | Full message threads, tool call logs, timestamps |
-| User Profile | chrome.storage.sync | API keys, model preferences, active skills (synced across devices) |
-| Skill Registry | IndexedDB | Installed skills, metadata, execution logs |
-| Memory | IndexedDB | Semantic memory: extracted facts, user preferences, project context |
-| Page Cache | In-memory (service worker) | Recent page extractions for context continuity |
+| Store                | Technology                 | Contents                                                            |
+| -------------------- | -------------------------- | ------------------------------------------------------------------- |
+| Conversation History | IndexedDB (via Dexie.js)   | Full message threads, tool call logs, timestamps                    |
+| User Profile         | chrome.storage.sync        | API keys, model preferences, active skills (synced across devices)  |
+| Skill Registry       | IndexedDB                  | Installed skills, metadata, execution logs                          |
+| Memory               | IndexedDB                  | Semantic memory: extracted facts, user preferences, project context |
+| Page Cache           | In-memory (service worker) | Recent page extractions for context continuity                      |
 
 ### 5.3 LLM Integration
 
@@ -133,36 +133,36 @@ ChromeClaw implements a full ReAct-style agent loop: the LLM reasons about the t
 
 ### 6.4 Built-in Skills (MVP)
 
-| Skill | Description | Chrome APIs Used |
-|---|---|---|
-| page_reader | Extract and summarize current page content | Content script DOM access |
-| tab_manager | Open, close, search, group, reorder tabs | chrome.tabs, chrome.tabGroups |
-| web_search | Search the web and return structured results | fetch() from service worker |
-| screenshot | Capture visible tab as image | chrome.tabs.captureVisibleTab |
-| clipboard | Read/write clipboard content | navigator.clipboard API |
-| bookmark_manager | Search, create, organize bookmarks | chrome.bookmarks |
-| history_search | Search browsing history with filters | chrome.history |
-| download | Trigger and manage file downloads | chrome.downloads |
+| Skill             | Description                                      | Chrome APIs Used               |
+| ----------------- | ------------------------------------------------ | ------------------------------ |
+| page_reader       | Extract and summarize current page content       | Content script DOM access      |
+| tab_manager       | Open, close, search, group, reorder tabs         | chrome.tabs, chrome.tabGroups  |
+| web_search        | Search the web and return structured results     | fetch() from service worker    |
+| screenshot        | Capture visible tab as image                     | chrome.tabs.captureVisibleTab  |
+| clipboard         | Read/write clipboard content                     | navigator.clipboard API        |
+| bookmark_manager  | Search, create, organize bookmarks               | chrome.bookmarks               |
+| history_search    | Search browsing history with filters             | chrome.history                 |
+| download          | Trigger and manage file downloads                | chrome.downloads               |
 | storage_inspector | Read cookies and localStorage for current domain | chrome.cookies, content script |
-| notification | Send desktop notifications | chrome.notifications |
+| notification      | Send desktop notifications                       | chrome.notifications           |
 
 ### 6.5 Skill Plugin System
 
 A modular, sandboxed plugin system that allows first-party, community, and user-authored skills to extend ChromeClaw's capabilities.
 
-Each skill is a self-contained module exporting a name, description (used for LLM tool selection), a JSON Schema for parameters, and an async execute function. Skills receive a BrowserContext object providing safe access to tab info, page content, and storage — but never raw chrome.* APIs.
+Each skill is a self-contained module exporting a name, description (used for LLM tool selection), a JSON Schema for parameters, and an async execute function. Skills receive a BrowserContext object providing safe access to tab info, page content, and storage — but never raw chrome.\* APIs.
 
 ```typescript
 interface Skill {
-  name: string;
-  description: string;
-  parameters: JSONSchema;
-  permissions: SkillPermission[];
-  execute: (params: any, context: BrowserContext) => Promise<SkillResult>;
+	name: string
+	description: string
+	parameters: JSONSchema
+	permissions: SkillPermission[]
+	execute: (params: any, context: BrowserContext) => Promise<SkillResult>
 }
 ```
 
-- **Sandboxed execution:** Skills run in an isolated context. No direct access to chrome.* APIs — they interact through a controlled BrowserContext interface.
+- **Sandboxed execution:** Skills run in an isolated context. No direct access to chrome.\* APIs — they interact through a controlled BrowserContext interface.
 - **Manifest declaration:** Each skill declares its required permissions. Users approve permissions at install time.
 - **Skill store (v2):** Community-submitted skills with review, ratings, and verified publisher badges.
 
@@ -240,14 +240,14 @@ Specialized agents for different domains, inspired by OpenClaw's multi-agent wor
 
 ## 8. Technical Constraints and Mitigations
 
-| Constraint | Impact | Mitigation |
-|---|---|---|
-| MV3 service worker 5-min idle timeout | Background state is lost when the worker sleeps | Persist all state to IndexedDB/chrome.storage. Use chrome.alarms for periodic wakeups. Re-hydrate on activation. |
-| No eval() or dynamic code execution | Cannot load skills as arbitrary JS strings | Skills are statically bundled or loaded as ES modules from trusted sources. Sandboxed iframe execution for community skills. |
-| Content Security Policy restrictions | Limited script injection in extension pages | All UI rendering uses framework (React). No inline scripts or styles. |
-| Token limits for page context | Large pages exceed LLM context windows | Smart truncation: extract readable content, remove boilerplate, chunk into segments. Send only relevant chunks. |
-| No raw TCP/UDP sockets | Cannot connect to arbitrary services like OpenClaw does | Use fetch() for HTTP-based APIs. WebSocket for real-time connections. Ollama connects via HTTP. |
-| Chrome Web Store review process | Updates require review (1-3 days) | Skill system decouples functionality from extension updates. Core extension updates are infrequent. |
+| Constraint                            | Impact                                                  | Mitigation                                                                                                                   |
+| ------------------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| MV3 service worker 5-min idle timeout | Background state is lost when the worker sleeps         | Persist all state to IndexedDB/chrome.storage. Use chrome.alarms for periodic wakeups. Re-hydrate on activation.             |
+| No eval() or dynamic code execution   | Cannot load skills as arbitrary JS strings              | Skills are statically bundled or loaded as ES modules from trusted sources. Sandboxed iframe execution for community skills. |
+| Content Security Policy restrictions  | Limited script injection in extension pages             | All UI rendering uses framework (React). No inline scripts or styles.                                                        |
+| Token limits for page context         | Large pages exceed LLM context windows                  | Smart truncation: extract readable content, remove boilerplate, chunk into segments. Send only relevant chunks.              |
+| No raw TCP/UDP sockets                | Cannot connect to arbitrary services like OpenClaw does | Use fetch() for HTTP-based APIs. WebSocket for real-time connections. Ollama connects via HTTP.                              |
+| Chrome Web Store review process       | Updates require review (1-3 days)                       | Skill system decouples functionality from extension updates. Core extension updates are infrequent.                          |
 
 ---
 
@@ -260,23 +260,23 @@ ChromeClaw's security posture is significantly stronger than OpenClaw by design:
 - **Permission-scoped skills:** Skills declare required permissions upfront. Users grant permissions explicitly. Skills cannot access APIs beyond their declared scope.
 - **API key isolation:** Keys stored in chrome.storage.sync (encrypted by Chrome). Never accessible to content scripts or skills.
 - **Content script isolation:** Content scripts run in an isolated world. Page scripts cannot access extension internals.
-- **Skill sandboxing:** Community skills execute in a sandboxed iframe with a restricted API surface. No direct chrome.* access.
+- **Skill sandboxing:** Community skills execute in a sandboxed iframe with a restricted API surface. No direct chrome.\* access.
 
 ---
 
 ## 10. Recommended Tech Stack
 
-| Layer | Technology | Rationale |
-|---|---|---|
-| Build Framework | WXT (Web Extension Toolkit) | Best-in-class DX for MV3 extensions. HMR, auto-manifest, multi-browser support. |
-| UI Framework | React 19 | Largest ecosystem, excellent extension support, concurrent rendering for streaming. |
-| Styling | Tailwind CSS | Rapid UI development, consistent design system, small bundle size with purging. |
-| State Management | Zustand | Lightweight, works across extension contexts (popup, background, content script). |
-| Local Database | Dexie.js (IndexedDB) | Best IndexedDB wrapper. Reactive queries, versioned schema migrations. |
-| LLM Client | Vercel AI SDK | Unified interface for multiple LLM providers. Streaming, tool calling, structured output. |
-| Schema Validation | Zod | Runtime validation for skill parameters, API responses, and stored data. |
-| Testing | Vitest + Playwright | Unit testing + E2E testing for extension flows. |
-| Bundler | Vite (via WXT) | Fast builds, tree-shaking, code splitting for extension chunks. |
+| Layer             | Technology                  | Rationale                                                                                 |
+| ----------------- | --------------------------- | ----------------------------------------------------------------------------------------- |
+| Build Framework   | WXT (Web Extension Toolkit) | Best-in-class DX for MV3 extensions. HMR, auto-manifest, multi-browser support.           |
+| UI Framework      | React 19                    | Largest ecosystem, excellent extension support, concurrent rendering for streaming.       |
+| Styling           | Tailwind CSS                | Rapid UI development, consistent design system, small bundle size with purging.           |
+| State Management  | Zustand                     | Lightweight, works across extension contexts (popup, background, content script).         |
+| Local Database    | Dexie.js (IndexedDB)        | Best IndexedDB wrapper. Reactive queries, versioned schema migrations.                    |
+| LLM Client        | Vercel AI SDK               | Unified interface for multiple LLM providers. Streaming, tool calling, structured output. |
+| Schema Validation | Zod                         | Runtime validation for skill parameters, API responses, and stored data.                  |
+| Testing           | Vitest + Playwright         | Unit testing + E2E testing for extension flows.                                           |
+| Bundler           | Vite (via WXT)              | Fast builds, tree-shaking, code splitting for extension chunks.                           |
 
 ---
 
@@ -321,45 +321,45 @@ ChromeClaw's security posture is significantly stronger than OpenClaw by design:
 
 ## 12. Success Metrics
 
-| Metric | Target (3 months) | Target (6 months) |
-|---|---|---|
-| Chrome Web Store installs | 5,000 | 25,000 |
-| Weekly active users | 2,000 | 10,000 |
-| Average session length | > 5 minutes | > 8 minutes |
-| Skills executed per user per week | > 10 | > 25 |
-| Community skills published | 20 | 100 |
-| Chrome Web Store rating | > 4.5 stars | > 4.5 stars |
-| Crash-free sessions | > 99.5% | > 99.8% |
+| Metric                            | Target (3 months) | Target (6 months) |
+| --------------------------------- | ----------------- | ----------------- |
+| Chrome Web Store installs         | 5,000             | 25,000            |
+| Weekly active users               | 2,000             | 10,000            |
+| Average session length            | > 5 minutes       | > 8 minutes       |
+| Skills executed per user per week | > 10              | > 25              |
+| Community skills published        | 20                | 100               |
+| Chrome Web Store rating           | > 4.5 stars       | > 4.5 stars       |
+| Crash-free sessions               | > 99.5%           | > 99.8%           |
 
 ---
 
 ## 13. Competitive Landscape
 
-| Feature | ChromeClaw | OpenClaw | ChatGPT Extension | Sider AI |
-|---|---|---|---|---|
-| Setup complexity | One-click install | CLI + server + daemon | One-click | One-click |
-| Browser-native context | Full DOM access | Requires browser skill | Limited | Limited |
-| Tool calling / agent loop | Yes (ReAct) | Yes (full agent) | No | No |
-| Skill/plugin system | Yes (sandboxed) | Yes (ClawHub) | No | No |
-| Model agnostic | Yes (BYOK) | Yes (BYOK) | GPT only | Multiple |
-| Local model support | Yes (Ollama) | Yes (Ollama) | No | No |
-| Multi-channel | Browser only | 15+ channels | Browser only | Browser only |
-| Self-hosted / private | Yes (local extension) | Yes (local server) | No (cloud) | No (cloud) |
-| Cross-tab workflows | Native | Via browser skill | No | No |
-| Open source | Yes | Yes | No | No |
+| Feature                   | ChromeClaw            | OpenClaw               | ChatGPT Extension | Sider AI     |
+| ------------------------- | --------------------- | ---------------------- | ----------------- | ------------ |
+| Setup complexity          | One-click install     | CLI + server + daemon  | One-click         | One-click    |
+| Browser-native context    | Full DOM access       | Requires browser skill | Limited           | Limited      |
+| Tool calling / agent loop | Yes (ReAct)           | Yes (full agent)       | No                | No           |
+| Skill/plugin system       | Yes (sandboxed)       | Yes (ClawHub)          | No                | No           |
+| Model agnostic            | Yes (BYOK)            | Yes (BYOK)             | GPT only          | Multiple     |
+| Local model support       | Yes (Ollama)          | Yes (Ollama)           | No                | No           |
+| Multi-channel             | Browser only          | 15+ channels           | Browser only      | Browser only |
+| Self-hosted / private     | Yes (local extension) | Yes (local server)     | No (cloud)        | No (cloud)   |
+| Cross-tab workflows       | Native                | Via browser skill      | No                | No           |
+| Open source               | Yes                   | Yes                    | No                | No           |
 
 ---
 
 ## 14. Risks and Mitigations
 
-| Risk | Likelihood | Impact | Mitigation |
-|---|---|---|---|
-| Chrome MV3 API limitations restrict agent capabilities | Medium | High | Design skill system to gracefully degrade. Maintain a capability matrix. Advocate for API improvements via Chrome bug tracker. |
-| Chrome Web Store rejection or slow review | Medium | Medium | Follow all CWS policies strictly. Maintain sideload/dev mode install path for power users. |
-| Malicious community skills (same issue as OpenClaw) | High | High | Sandboxed iframe execution. Permission declarations. Code review for featured skills. User ratings and reporting. |
-| LLM API costs deter adoption | Medium | Medium | Prominent Ollama/local model support. Usage tracking dashboard. Smart caching to reduce redundant calls. |
-| Prompt injection via page content | High | Medium | Clearly delineate page content in system prompt. Content sanitization. User confirmation for destructive actions. |
-| Service worker lifecycle causes state loss | High | Low | All state persisted to IndexedDB. Idempotent operations. Graceful recovery on worker restart. |
+| Risk                                                   | Likelihood | Impact | Mitigation                                                                                                                     |
+| ------------------------------------------------------ | ---------- | ------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| Chrome MV3 API limitations restrict agent capabilities | Medium     | High   | Design skill system to gracefully degrade. Maintain a capability matrix. Advocate for API improvements via Chrome bug tracker. |
+| Chrome Web Store rejection or slow review              | Medium     | Medium | Follow all CWS policies strictly. Maintain sideload/dev mode install path for power users.                                     |
+| Malicious community skills (same issue as OpenClaw)    | High       | High   | Sandboxed iframe execution. Permission declarations. Code review for featured skills. User ratings and reporting.              |
+| LLM API costs deter adoption                           | Medium     | Medium | Prominent Ollama/local model support. Usage tracking dashboard. Smart caching to reduce redundant calls.                       |
+| Prompt injection via page content                      | High       | Medium | Clearly delineate page content in system prompt. Content sanitization. User confirmation for destructive actions.              |
+| Service worker lifecycle causes state loss             | High       | Low    | All state persisted to IndexedDB. Idempotent operations. Graceful recovery on worker restart.                                  |
 
 ---
 
@@ -373,4 +373,4 @@ ChromeClaw's security posture is significantly stronger than OpenClaw by design:
 
 ---
 
-*End of Document*
+_End of Document_

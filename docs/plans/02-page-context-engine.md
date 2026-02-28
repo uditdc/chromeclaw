@@ -48,55 +48,55 @@ stores/
 // types/context.ts
 
 interface PageContext {
-  tabId: number;
-  url: string;
-  title: string;
-  metadata: PageMetadata;
-  content: ContentChunk[];
-  selectedElements: ExtractedElement[];
-  screenshot?: string;  // base64 data URL
-  extractedAt: number;
+	tabId: number
+	url: string
+	title: string
+	metadata: PageMetadata
+	content: ContentChunk[]
+	selectedElements: ExtractedElement[]
+	screenshot?: string // base64 data URL
+	extractedAt: number
 }
 
 interface PageMetadata {
-  title: string;
-  description: string;
-  ogImage?: string;
-  author?: string;
-  publishedDate?: string;
-  language: string;
-  siteName?: string;
+	title: string
+	description: string
+	ogImage?: string
+	author?: string
+	publishedDate?: string
+	language: string
+	siteName?: string
 }
 
 interface ContentChunk {
-  id: string;
-  text: string;
-  type: 'paragraph' | 'heading' | 'code' | 'table' | 'list' | 'blockquote';
-  tokenEstimate: number;
-  sourceSelector?: string;  // CSS selector path for traceability
+	id: string
+	text: string
+	type: 'paragraph' | 'heading' | 'code' | 'table' | 'list' | 'blockquote'
+	tokenEstimate: number
+	sourceSelector?: string // CSS selector path for traceability
 }
 
 interface ExtractedElement {
-  id: string;
-  selector: string;
-  html: string;
-  text: string;
-  type: string;  // tag name
-  tokenEstimate: number;
+	id: string
+	selector: string
+	html: string
+	text: string
+	type: string // tag name
+	tokenEstimate: number
 }
 
 interface ExtractionRequest {
-  type: 'EXTRACT_PAGE';
-  options: {
-    includeMetadata: boolean;
-    includeStructured: boolean;
-    maxTokens: number;
-  };
+	type: 'EXTRACT_PAGE'
+	options: {
+		includeMetadata: boolean
+		includeStructured: boolean
+		maxTokens: number
+	}
 }
 
 interface ExtractionResponse {
-  type: 'EXTRACTION_RESULT';
-  context: PageContext;
+	type: 'EXTRACTION_RESULT'
+	context: PageContext
 }
 ```
 

@@ -43,49 +43,49 @@ types/
 ```typescript
 // types/agent.ts
 
-type AutonomyLevel = 'full-auto' | 'confirm-each' | 'manual-only';
+type AutonomyLevel = 'full-auto' | 'confirm-each' | 'manual-only'
 
 interface ToolDefinition {
-  name: string;
-  description: string;
-  parameters: z.ZodSchema;
-  requiresConfirmation: boolean;  // true for destructive actions regardless of autonomy level
-  execute: (params: unknown) => Promise<ToolResult>;
+	name: string
+	description: string
+	parameters: z.ZodSchema
+	requiresConfirmation: boolean // true for destructive actions regardless of autonomy level
+	execute: (params: unknown) => Promise<ToolResult>
 }
 
 interface ToolCall {
-  id: string;
-  toolName: string;
-  args: Record<string, unknown>;
-  status: 'pending-approval' | 'executing' | 'completed' | 'rejected' | 'error';
+	id: string
+	toolName: string
+	args: Record<string, unknown>
+	status: 'pending-approval' | 'executing' | 'completed' | 'rejected' | 'error'
 }
 
 interface ToolResult {
-  success: boolean;
-  data: unknown;
-  error?: string;
-  displayHint?: 'text' | 'json' | 'table' | 'image';
+	success: boolean
+	data: unknown
+	error?: string
+	displayHint?: 'text' | 'json' | 'table' | 'image'
 }
 
 interface AgentStep {
-  stepNumber: number;
-  reasoning?: string;
-  toolCalls: ToolCall[];
-  toolResults: ToolResult[];
+	stepNumber: number
+	reasoning?: string
+	toolCalls: ToolCall[]
+	toolResults: ToolResult[]
 }
 
 interface ApprovalRequest {
-  type: 'TOOL_APPROVAL_REQUEST';
-  callId: string;
-  toolName: string;
-  args: Record<string, unknown>;
-  description: string;
+	type: 'TOOL_APPROVAL_REQUEST'
+	callId: string
+	toolName: string
+	args: Record<string, unknown>
+	description: string
 }
 
 interface ApprovalResponse {
-  type: 'TOOL_APPROVAL_RESPONSE';
-  callId: string;
-  approved: boolean;
+	type: 'TOOL_APPROVAL_RESPONSE'
+	callId: string
+	approved: boolean
 }
 ```
 

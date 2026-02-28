@@ -33,77 +33,77 @@ skills/
 ```typescript
 // page-reader
 const pageReaderParams = z.object({
-  tabId: z.number().optional(),         // defaults to active tab
-  maxTokens: z.number().default(4000),
-  includeMetadata: z.boolean().default(true),
-});
+	tabId: z.number().optional(), // defaults to active tab
+	maxTokens: z.number().default(4000),
+	includeMetadata: z.boolean().default(true)
+})
 
 // tab-manager
 const tabManagerParams = z.object({
-  action: z.enum(['list', 'open', 'close', 'search', 'group', 'activate']),
-  url: z.string().optional(),
-  tabId: z.number().optional(),
-  query: z.string().optional(),
-  groupName: z.string().optional(),
-  tabIds: z.array(z.number()).optional(),
-});
+	action: z.enum(['list', 'open', 'close', 'search', 'group', 'activate']),
+	url: z.string().optional(),
+	tabId: z.number().optional(),
+	query: z.string().optional(),
+	groupName: z.string().optional(),
+	tabIds: z.array(z.number()).optional()
+})
 
 // web-search
 const webSearchParams = z.object({
-  query: z.string(),
-  numResults: z.number().default(5),
-});
+	query: z.string(),
+	numResults: z.number().default(5)
+})
 
 // screenshot
 const screenshotParams = z.object({
-  format: z.enum(['png', 'jpeg']).default('png'),
-  quality: z.number().min(0).max(100).optional(),
-});
+	format: z.enum(['png', 'jpeg']).default('png'),
+	quality: z.number().min(0).max(100).optional()
+})
 
 // clipboard
 const clipboardParams = z.object({
-  action: z.enum(['read', 'write']),
-  text: z.string().optional(),         // required for write
-});
+	action: z.enum(['read', 'write']),
+	text: z.string().optional() // required for write
+})
 
 // bookmark-manager
 const bookmarkParams = z.object({
-  action: z.enum(['search', 'create', 'delete', 'list']),
-  query: z.string().optional(),
-  url: z.string().optional(),
-  title: z.string().optional(),
-  folderId: z.string().optional(),
-});
+	action: z.enum(['search', 'create', 'delete', 'list']),
+	query: z.string().optional(),
+	url: z.string().optional(),
+	title: z.string().optional(),
+	folderId: z.string().optional()
+})
 
 // history-search
 const historySearchParams = z.object({
-  query: z.string(),
-  maxResults: z.number().default(20),
-  startTime: z.number().optional(),    // epoch ms
-  endTime: z.number().optional(),
-});
+	query: z.string(),
+	maxResults: z.number().default(20),
+	startTime: z.number().optional(), // epoch ms
+	endTime: z.number().optional()
+})
 
 // download
 const downloadParams = z.object({
-  action: z.enum(['start', 'list', 'cancel', 'pause', 'resume']),
-  url: z.string().optional(),
-  filename: z.string().optional(),
-  downloadId: z.number().optional(),
-});
+	action: z.enum(['start', 'list', 'cancel', 'pause', 'resume']),
+	url: z.string().optional(),
+	filename: z.string().optional(),
+	downloadId: z.number().optional()
+})
 
 // storage-inspector
 const storageInspectorParams = z.object({
-  target: z.enum(['cookies', 'localStorage', 'sessionStorage']),
-  domain: z.string().optional(),       // defaults to active tab's domain
-  key: z.string().optional(),
-});
+	target: z.enum(['cookies', 'localStorage', 'sessionStorage']),
+	domain: z.string().optional(), // defaults to active tab's domain
+	key: z.string().optional()
+})
 
 // notification
 const notificationParams = z.object({
-  title: z.string(),
-  message: z.string(),
-  iconUrl: z.string().optional(),
-});
+	title: z.string(),
+	message: z.string(),
+	iconUrl: z.string().optional()
+})
 ```
 
 ## Implementation Steps

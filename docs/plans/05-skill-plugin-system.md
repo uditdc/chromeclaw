@@ -50,67 +50,67 @@ lib/
 // skills/types.ts
 
 type SkillPermission =
-  | 'tabs:read'
-  | 'tabs:write'
-  | 'page:read'
-  | 'page:write'
-  | 'storage:read'
-  | 'storage:write'
-  | 'bookmarks:read'
-  | 'bookmarks:write'
-  | 'history:read'
-  | 'downloads:read'
-  | 'downloads:write'
-  | 'clipboard:read'
-  | 'clipboard:write'
-  | 'notifications:write'
-  | 'network:fetch';
+	| 'tabs:read'
+	| 'tabs:write'
+	| 'page:read'
+	| 'page:write'
+	| 'storage:read'
+	| 'storage:write'
+	| 'bookmarks:read'
+	| 'bookmarks:write'
+	| 'history:read'
+	| 'downloads:read'
+	| 'downloads:write'
+	| 'clipboard:read'
+	| 'clipboard:write'
+	| 'notifications:write'
+	| 'network:fetch'
 
 interface Skill {
-  name: string;
-  description: string;
-  version: string;
-  author?: string;
-  parameters: z.ZodSchema;
-  permissions: SkillPermission[];
-  execute: (params: unknown, context: BrowserContext) => Promise<SkillResult>;
+	name: string
+	description: string
+	version: string
+	author?: string
+	parameters: z.ZodSchema
+	permissions: SkillPermission[]
+	execute: (params: unknown, context: BrowserContext) => Promise<SkillResult>
 }
 
 interface SkillManifest {
-  name: string;
-  description: string;
-  version: string;
-  author: string;
-  permissions: SkillPermission[];
-  parametersSchema: Record<string, unknown>;  // JSON Schema
-  entrypoint: string;                         // relative path to the execute function module
+	name: string
+	description: string
+	version: string
+	author: string
+	permissions: SkillPermission[]
+	parametersSchema: Record<string, unknown> // JSON Schema
+	entrypoint: string // relative path to the execute function module
 }
 
 interface SkillResult {
-  success: boolean;
-  data: unknown;
-  error?: string;
-  displayHint?: 'text' | 'json' | 'table' | 'image';
+	success: boolean
+	data: unknown
+	error?: string
+	displayHint?: 'text' | 'json' | 'table' | 'image'
 }
 
 interface BrowserContext {
-  getActiveTab(): Promise<{ id: number; url: string; title: string }>;
-  getPageContent(tabId?: number): Promise<string>;
-  getTabs(query?: { url?: string; title?: string }): Promise<TabInfo[]>;
-  openTab(url: string): Promise<TabInfo>;
-  readStorage(key: string): Promise<unknown>;
-  writeStorage(key: string, value: unknown): Promise<void>;
-  fetch(url: string, options?: RequestInit): Promise<{ status: number; body: string }>;
-  notify(title: string, message: string): Promise<void>;
+	getActiveTab(): Promise<{ id: number; url: string; title: string }>
+	getPageContent(tabId?: number): Promise<string>
+	getTabs(query?: { url?: string; title?: string }): Promise<TabInfo[]>
+	openTab(url: string): Promise<TabInfo>
+	readStorage(key: string): Promise<unknown>
+	writeStorage(key: string, value: unknown): Promise<void>
+	fetch(url: string, options?: RequestInit): Promise<{ status: number; body: string }>
+	notify(title: string, message: string): Promise<void>
 }
 
 interface InstalledSkill {
-  id: string;
-  manifest: SkillManifest;
-  code: string;                              // bundled JS to run in sandbox
-  enabled: boolean;
-  grantedPermissions: SkillPermission[];
-  installedAt: number;
+	id: string
+	manifest: SkillManifest
+	code: string // bundled JS to run in sandbox
+	enabled: boolean
+	grantedPermissions: SkillPermission[]
+	installedAt: number
 }
 ```
 
