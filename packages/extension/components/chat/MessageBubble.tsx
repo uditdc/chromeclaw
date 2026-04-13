@@ -30,9 +30,6 @@ export function MessageBubble({ role, content, model, isStreaming }: Props) {
           <StreamingIndicator />
         ) : null}
 
-        {model && !isUser && (
-          <p className="mt-1 text-[10px] text-neutral-500">{model}</p>
-        )}
       </div>
     </div>
   )

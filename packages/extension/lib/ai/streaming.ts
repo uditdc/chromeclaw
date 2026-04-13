@@ -13,9 +13,9 @@ export function sendChatRequest(
 
 export function onStreamChunk(
   port: Browser.runtime.Port,
-  callback: (chunk: ChatStreamChunk & { error?: string }) => void,
+  callback: (chunk: ChatStreamChunk) => void,
 ): () => void {
-  const listener = (msg: ChatStreamChunk & { error?: string }) => {
+  const listener = (msg: ChatStreamChunk) => {
     if (msg.type === 'CHAT_STREAM_CHUNK') {
       callback(msg)
     }

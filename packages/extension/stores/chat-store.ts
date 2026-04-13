@@ -6,6 +6,7 @@ import {
   getMessages,
   addMessage,
   updateConversation,
+  listConversations,
 } from '../lib/db/conversations'
 import { useSettingsStore } from './settings-store'
 
@@ -22,10 +23,10 @@ interface ChatState {
   addUserMessage: (content: string) => Promise<ChatMessage>
   addAssistantMessage: (content: string) => Promise<ChatMessage>
   appendStreamDelta: (delta: string) => void
-  finalizeStream: () => Promise<void>
+  finalizeStream: (content?: string) => Promise<void>
   setStreaming: (streaming: boolean) => void
   setError: (error: string | null) => void
-  switchModel: (provider: string, model: string) => void
+  loadLastConversation: () => Promise<void>
 }
 
 export const useChatStore = create<ChatState>((set, get) => ({
@@ -81,14 +82,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set((s) => ({ streamingContent: s.streamingContent + delta }))
   },
 
-  finalizeStream: async () => {
-    const { streamingContent, conversation } = get()
-    if (!streamingContent || !conversation) return
+  finalizeStream: async (content?: string) => {
+    const resolvedContent = content || get().streamingContent
+    const { conversation } = get()
+    if (!resolvedContent || !conversation) return
     const settings = useSettingsStore.getState()
     const msg = await addMessage({
       conversationId: conversation.id,
       role: 'assistant',
-      content: streamingContent,
+      content: resolvedContent,
       model: settings.activeModel,
       provider: settings.activeProvider,
     })
@@ -113,11 +115,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
   setError: (error) => set({ error, isStreaming: false }),
 
-  switchModel: (provider, model) => {
-    const { conversation } = get()
-    if (conversation) {
-      updateConversation(conversation.id, { model, provider })
-      set({ conversation: { ...conversation, model, provider } })
-    }
+  loadLastConversation: async () => {
+    const conversations = await listConversations()
+    if (conversations.length === 0) return
+    const last = conversations[0]
+    const msgs = await getMessages(last.id)
+    set({ conversation: last, messages: msgs, streamingContent: '', error: null })
   },
 }))

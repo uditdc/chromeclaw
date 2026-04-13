@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { ModelSwitcher } from './ModelSwitcher'
+import { useSettingsStore } from '../../stores/settings-store'
 
 interface Props {
   onSend: (content: string) => void
@@ -9,6 +9,7 @@ interface Props {
 export function ChatInput({ onSend, disabled }: Props) {
   const [input, setInput] = useState('')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const activeModel = useSettingsStore((s) => s.getActiveModel())
 
   useEffect(() => {
     if (!disabled) textareaRef.current?.focus()
@@ -57,9 +58,6 @@ export function ChatInput({ onSend, disabled }: Props) {
         >
           Send
         </button>
-      </div>
-      <div className="mt-2 flex justify-end">
-        <ModelSwitcher />
       </div>
     </div>
   )

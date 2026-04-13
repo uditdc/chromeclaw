@@ -1,15 +1,7 @@
 import { streamText } from 'ai'
 import { createModel } from '../lib/ai/client'
-import type { LLMProvider } from '../types/chat'
+import { PROVIDERS } from '../lib/ai/providers'
 import type { ChatRequest, ChatStreamChunk, ExtensionMessage } from '../types/messages'
-
-const PROVIDERS: LLMProvider[] = [
-  { id: 'anthropic', name: 'Anthropic', baseURL: 'https://api.anthropic.com/v1', apiKeyRequired: true, models: [] },
-  { id: 'openai', name: 'OpenAI', baseURL: 'https://api.openai.com/v1', apiKeyRequired: true, models: [] },
-  { id: 'google', name: 'Google', baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai', apiKeyRequired: true, models: [] },
-  { id: 'ollama', name: 'Ollama', baseURL: 'http://localhost:11434/v1', apiKeyRequired: false, models: [] },
-  { id: 'openrouter', name: 'OpenRouter', baseURL: 'https://openrouter.ai/api/v1', apiKeyRequired: true, models: [] },
-]
 
 export default defineBackground(() => {
   browser.runtime.onConnect.addListener((port) => {
@@ -23,13 +15,10 @@ export default defineBackground(() => {
   })
 
   browser.runtime.onMessage.addListener(
-    (msg: ExtensionMessage, _sender, _sendResponse) => {
-      switch (msg.type) {
-        case 'EXTRACT_PAGE':
-        case 'ELEMENT_PICKER_RESULT':
-        case 'TOOL_APPROVAL_RESPONSE':
-        case 'EXTRACTION_RESULT':
-          break
+    (msg: ExtensionMessage, _sender, sendResponse) => {
+      if (msg.type === 'VERIFY_API_KEY') {
+        verifyApiKey(msg.providerId, msg.apiKey, msg.baseURL).then(sendResponse)
+        return true
       }
       return false
     },
@@ -66,14 +55,36 @@ async function handleChatRequest(request: ChatRequest, port: Browser.runtime.Por
       })),
     })
 
+    let fullContent = ''
     for await (const chunk of result.textStream) {
+      fullContent += chunk
       sendChunk(port, request.conversationId, chunk, false)
     }
 
-    sendChunk(port, request.conversationId, '', true)
+    sendChunk(port, request.conversationId, '', true, undefined, fullContent)
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error'
     sendChunk(port, request.conversationId, '', true, message)
+  }
+}
+
+async function verifyApiKey(
+  providerId: string,
+  apiKey: string,
+  baseURL: string,
+): Promise<{ valid: boolean; error?: string }> {
+  try {
+    const response = await fetch(`${baseURL}/models`, {
+      headers: apiKey ? { Authorization: `Bearer ${apiKey}` } : {},
+    })
+    if (response.ok) return { valid: true }
+    const text = await response.text()
+    return { valid: false, error: `${response.status}: ${text.slice(0, 200)}` }
+  } catch (err) {
+    return {
+      valid: false,
+      error: err instanceof Error ? err.message : 'Connection failed',
+    }
   }
 }
 
@@ -83,14 +94,16 @@ function sendChunk(
   delta: string,
   done: boolean,
   error?: string,
+  fullContent?: string,
 ) {
-  const chunk: ChatStreamChunk & { error?: string } = {
+  const chunk: ChatStreamChunk = {
     type: 'CHAT_STREAM_CHUNK',
     conversationId,
     delta,
     done,
   }
   if (error) chunk.error = error
+  if (fullContent) chunk.fullContent = fullContent
   port.postMessage(chunk)
 }
 

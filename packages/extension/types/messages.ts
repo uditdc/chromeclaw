@@ -18,6 +18,8 @@ export interface ChatStreamChunk {
   conversationId: string
   delta: string
   done: boolean
+  fullContent?: string
+  error?: string
 }
 
 export interface ChatMessage {
@@ -85,6 +87,15 @@ export interface PrefilledPrompt {
   source: 'context-menu' | 'omnibox'
 }
 
+// ── Settings ────────────────────────────────────────────────────────────────
+
+export interface VerifyApiKeyRequest {
+  type: 'VERIFY_API_KEY'
+  providerId: string
+  apiKey: string
+  baseURL: string
+}
+
 // ── Memory ──────────────────────────────────────────────────────────────────
 
 export interface MemoryExtracted {
@@ -104,4 +115,5 @@ export type ExtensionMessage =
   | ToolApprovalRequest
   | ToolApprovalResponse
   | PrefilledPrompt
+  | VerifyApiKeyRequest
   | MemoryExtracted

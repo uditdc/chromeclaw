@@ -8,57 +8,74 @@ import type { ChatRequest } from '../types/messages'
 export function useChatStream() {
   const portRef = useRef<Browser.runtime.Port | null>(null)
 
-  const {
-    conversation,
-    messages,
-    streamingContent,
-    isStreaming,
-    error,
-    startConversation,
-    addUserMessage,
-    appendStreamDelta,
-    finalizeStream,
-    setStreaming,
-    setError,
-  } = useChatStore()
+  const conversation = useChatStore((s) => s.conversation)
+  const messages = useChatStore((s) => s.messages)
+  const streamingContent = useChatStore((s) => s.streamingContent)
+  const isStreaming = useChatStore((s) => s.isStreaming)
+  const error = useChatStore((s) => s.error)
 
   const { activeProvider, activeModel } = useSettingsStore()
 
   useEffect(() => {
-    portRef.current = connectChatPort()
-    const cleanup = onStreamChunk(portRef.current, (chunk) => {
+    const port = connectChatPort()
+    portRef.current = port
+
+    const cleanup = onStreamChunk(port, (chunk) => {
+      const store = useChatStore.getState()
       if (chunk.error) {
-        setError(chunk.error)
+        store.setError(chunk.error)
       } else if (chunk.done) {
-        finalizeStream()
+        store.finalizeStream(chunk.fullContent)
       } else {
-        appendStreamDelta(chunk.delta)
+        store.appendStreamDelta(chunk.delta)
       }
     })
 
-    portRef.current.onDisconnect.addListener(() => {
+    port.onDisconnect.addListener(() => {
       portRef.current = null
     })
 
     return () => {
       cleanup()
-      portRef.current?.disconnect()
+      port.disconnect()
     }
-  }, [appendStreamDelta, finalizeStream])
+  }, [])
+
+  const ensurePort = useCallback(() => {
+    if (portRef.current) return portRef.current
+    const port = connectChatPort()
+    portRef.current = port
+    onStreamChunk(port, (chunk) => {
+      const store = useChatStore.getState()
+      if (chunk.error) {
+        store.setError(chunk.error)
+      } else if (chunk.done) {
+        store.finalizeStream(chunk.fullContent)
+      } else {
+        store.appendStreamDelta(chunk.delta)
+      }
+    })
+    port.onDisconnect.addListener(() => {
+      portRef.current = null
+    })
+    return port
+  }, [])
 
   const send = useCallback(
     async (content: string) => {
-      if (isStreaming || !content.trim()) return
+      if (useChatStore.getState().isStreaming || !content.trim()) return
 
-      let conv = conversation
+      const store = useChatStore.getState()
+      let conv = store.conversation
       if (!conv) {
-        conv = await startConversation()
+        conv = await store.startConversation()
       }
 
-      setError(null)
-      setStreaming(true)
+      store.setError(null)
+      store.setStreaming(true)
 
-      const userMsg = await addUserMessage(content)
+      const currentMessages = useChatStore.getState().messages
+      const userMsg = await store.addUserMessage(content)
 
       const systemPrompt = buildSystemPrompt({})
 
@@ -66,7 +83,7 @@ export function useChatStream() {
         type: 'CHAT_REQUEST',
         conversationId: conv.id,
         messages: [
-          ...messages.map((m) => ({
+          ...currentMessages.map((m) => ({
             id: m.id,
             conversationId: m.conversationId,
             role: m.role,
@@ -81,37 +98,15 @@ export function useChatStream() {
             createdAt: userMsg.createdAt,
           },
         ],
-        model: activeModel,
-        provider: activeProvider,
+        model: useSettingsStore.getState().activeModel,
+        provider: useSettingsStore.getState().activeProvider,
         systemPrompt,
       }
 
-      if (!portRef.current) {
-        portRef.current = connectChatPort()
-        onStreamChunk(portRef.current, (chunk) => {
-          if (chunk.done) {
-            finalizeStream()
-          } else {
-            appendStreamDelta(chunk.delta)
-          }
-        })
-      }
-
-      sendChatRequest(portRef.current, request)
+      const port = ensurePort()
+      sendChatRequest(port, request)
     },
-    [
-      conversation,
-      messages,
-      isStreaming,
-      activeProvider,
-      activeModel,
-      startConversation,
-      addUserMessage,
-      appendStreamDelta,
-      finalizeStream,
-      setStreaming,
-      setError,
-    ],
+    [ensurePort],
   )
 
   return { send, messages, streamingContent, isStreaming, error }

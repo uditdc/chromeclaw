@@ -19,12 +19,10 @@
     "@mozilla/readability": "^0.6.0",
     "ai": "^6.0.158",
     "dexie": "^4.4.2",
+    "marked": "^18.0.0",
     "nanoid": "^5.1.7",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-markdown": "^10.1.0",
-    "rehype-highlight": "^7.0.2",
-    "remark-gfm": "^4.0.1",
     "zod": "^4.3.6",
     "zustand": "^5.0.12"
   },
