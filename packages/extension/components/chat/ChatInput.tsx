@@ -38,7 +38,7 @@ export function ChatInput({ onSend, disabled }: Props) {
   }
 
   return (
-    <div className="border-t border-neutral-800 p-3">
+    <div className="p-3">
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}

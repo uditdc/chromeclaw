@@ -20,6 +20,8 @@ export interface ChatStreamChunk {
   done: boolean
   fullContent?: string
   error?: string
+  toolCall?: ToolCall
+  toolResult?: { callId: string; result: ToolResult }
 }
 
 export interface ChatMessage {

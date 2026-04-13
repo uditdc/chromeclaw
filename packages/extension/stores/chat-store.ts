@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import type { Conversation } from '../types/chat'
 import type { ChatMessage } from '../types/messages'
+import type { ToolCall, ToolResult } from '../types/agent'
 import {
   createConversation,
   getMessages,
@@ -9,6 +10,12 @@ import {
   listConversations,
 } from '../lib/db/conversations'
 import { useSettingsStore } from './settings-store'
+
+interface FinalizeOptions {
+  content?: string
+  toolCalls?: ToolCall[]
+  toolResults?: ToolResult[]
+}
 
 interface ChatState {
   conversation: Conversation | null
@@ -23,7 +30,7 @@ interface ChatState {
   addUserMessage: (content: string) => Promise<ChatMessage>
   addAssistantMessage: (content: string) => Promise<ChatMessage>
   appendStreamDelta: (delta: string) => void
-  finalizeStream: (content?: string) => Promise<void>
+  finalizeStream: (options?: FinalizeOptions) => Promise<void>
   setStreaming: (streaming: boolean) => void
   setError: (error: string | null) => void
   loadLastConversation: () => Promise<void>
@@ -82,17 +89,27 @@ export const useChatStore = create<ChatState>((set, get) => ({
     set((s) => ({ streamingContent: s.streamingContent + delta }))
   },
 
-  finalizeStream: async (content?: string) => {
-    const resolvedContent = content || get().streamingContent
+  finalizeStream: async (options?: FinalizeOptions) => {
+    const resolvedContent = options?.content || get().streamingContent
     const { conversation } = get()
-    if (!resolvedContent || !conversation) return
+    if (!conversation) {
+      set({ streamingContent: '', isStreaming: false })
+      return
+    }
+    const hasToolCalls = options?.toolCalls && options.toolCalls.length > 0
+    if (!resolvedContent && !hasToolCalls) {
+      set({ streamingContent: '', isStreaming: false })
+      return
+    }
     const settings = useSettingsStore.getState()
     const msg = await addMessage({
       conversationId: conversation.id,
       role: 'assistant',
-      content: resolvedContent,
+      content: resolvedContent || '',
       model: settings.activeModel,
       provider: settings.activeProvider,
+      ...(options?.toolCalls ? { toolCalls: options.toolCalls } : {}),
+      ...(options?.toolResults ? { toolResults: options.toolResults } : {}),
     })
     set((s) => ({
       messages: [...s.messages, msg],

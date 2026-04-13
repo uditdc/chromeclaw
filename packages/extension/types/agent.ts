@@ -5,7 +5,7 @@ export type AutonomyLevel = 'full-auto' | 'confirm-each' | 'manual-only'
 export interface ToolDefinition {
   name: string
   description: string
-  parameters: z.ZodSchema
+  inputSchema: z.ZodSchema
   requiresConfirmation: boolean
   execute: (params: unknown) => Promise<ToolResult>
 }

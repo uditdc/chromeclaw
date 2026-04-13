@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChromeClaw Extraction Test Page</title>
+  <meta name="description" content="A test page for verifying ChromeClaw's page context extraction engine.">
+  <meta property="og:title" content="ChromeClaw Test Page">
+  <meta property="og:description" content="Test page with structured content for extraction testing.">
+  <meta property="og:image" content="https://example.com/test-image.png">
+  <meta name="author" content="ChromeClaw Test Suite">
+  <meta property="article:published_time" content="2026-01-15T10:00:00Z">
+  <meta property="og:site_name" content="ChromeClaw Tests">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; color: #e0e0e0; background: #1a1a1a; }
+    h1 { color: #60a5fa; }
+    h2 { color: #93c5fd; border-bottom: 1px solid #333; padding-bottom: 0.5rem; }
+    table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+    th, td { border: 1px solid #444; padding: 0.5rem; text-align: left; }
+    th { background: #2a2a2a; }
+    pre { background: #0d0d0d; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    code { color: #a5f3fc; }
+    blockquote { border-left: 3px solid #3b82f6; padding-left: 1rem; color: #9ca3af; }
+    .test-section { margin: 2rem 0; padding: 1rem; border: 1px solid #333; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <article>
+    <h1>ChromeClaw Page Context Extraction Test</h1>
+    <p>This page contains various structured content types to test ChromeClaw's extraction engine. Each section below represents a different content type that the extractor should identify and categorize correctly.</p>
+
+    <h2>Paragraphs</h2>
+    <p>The page context engine uses Mozilla's Readability library to extract the main content from any web page. It strips away navigation, ads, sidebars, and other non-essential elements to provide clean, readable text to the AI.</p>
+    <p>Token estimation is performed by dividing the character count by 4, which provides a rough approximation of the number of tokens that the content will consume when sent to an LLM.</p>
+
+    <h2>Data Table</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>Status</th>
+          <th>Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Page Extraction</td>
+          <td>Implemented</td>
+          <td>High</td>
+        </tr>
+        <tr>
+          <td>Element Picker</td>
+          <td>Implemented</td>
+          <td>Medium</td>
+        </tr>
+        <tr>
+          <td>Multi-tab Context</td>
+          <td>Implemented</td>
+          <td>Low</td>
+        </tr>
+        <tr>
+          <td>Screenshot Capture</td>
+          <td>Implemented</td>
+          <td>Low</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Code Block</h2>
+    <pre><code>function extractPageContext(options) {
+  const clone = new DOMParser().parseFromString(
+    document.documentElement.outerHTML,
+    'text/html'
+  );
+  const article = new Readability(clone).parse();
+  return {
+    title: document.title,
+    content: article?.content ?? '',
+    extractedAt: Date.now()
+  };
+}</code></pre>
+
+    <h2>Lists</h2>
+    <h3>Ordered List: Build Steps</h3>
+    <ol>
+      <li>Extract page metadata (title, description, OG tags)</li>
+      <li>Run Readability to get main content</li>
+      <li>Walk DOM for structured elements (tables, code, lists)</li>
+      <li>Split content into token-bounded chunks</li>
+      <li>Apply priority ordering and fit within budget</li>
+    </ol>
+
+    <h3>Unordered List: Supported Providers</h3>
+    <ul>
+      <li>Anthropic (Claude Sonnet, Opus)</li>
+      <li>OpenAI (GPT-4o, GPT-4.1)</li>
+      <li>Google (Gemini 2.0 Flash, 2.5 Pro)</li>
+      <li>Ollama (Local models)</li>
+      <li>OpenRouter (Free tier available)</li>
+    </ul>
+
+    <h2>Blockquote</h2>
+    <blockquote>
+      "The best AI assistant is one that understands not just what you're asking, but the context in which you're asking it. Page context extraction bridges the gap between what's on your screen and what the AI can reason about."
+    </blockquote>
+
+    <h2>Mixed Content Section</h2>
+    <div class="test-section" id="test-section">
+      <p>This section contains mixed content to test element-level selection. Try using the element picker to select individual elements within this section.</p>
+      <p><strong>Bold text</strong>, <em>italic text</em>, and <code>inline code</code> should all be preserved in the extraction.</p>
+    </div>
+  </article>
+</body>
+</html>
