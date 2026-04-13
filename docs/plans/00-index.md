@@ -9,6 +9,7 @@ Features have dependencies — build in this order:
 | #   | Feature                     | Plan                                                             | Depends On |
 | --- | --------------------------- | ---------------------------------------------------------------- | ---------- |
 | 1   | Intelligent Side Panel Chat | [01-side-panel-chat.md](./01-side-panel-chat.md)                 | —          |
+| 1.5 | Onboarding & Options Page   | [01.5-onboarding-and-options-page.md](./01.5-onboarding-and-options-page.md) | 6.1        |
 | 2   | Page Context Engine         | [02-page-context-engine.md](./02-page-context-engine.md)         | 6.1        |
 | 3   | Tool Calling & Agent Loop   | [03-tool-calling-agent-loop.md](./03-tool-calling-agent-loop.md) | 6.1        |
 | 4   | Built-in Skills (MVP)       | [04-built-in-skills.md](./04-built-in-skills.md)                 | 6.2, 6.3   |
