@@ -54,6 +54,7 @@ interface Memory {
 		messageId: string
 	}
 	confidence: number // 0-1, how confident the extraction was
+	embedding?: number[] // optional: vector embedding for semantic recall
 	createdAt: number
 	updatedAt: number
 	active: boolean // user can deactivate without deleting
@@ -96,6 +97,7 @@ interface MemoryInjection {
 7. **Build `MemoryManager.tsx`**: Options page component listing all memories grouped by category. Each `MemoryItem` shows the content text, category badge, timestamp, and edit/delete buttons. Include a search bar for filtering. Add a "Clear All" button with confirmation.
 8. **Build `MemoryBadge.tsx`**: Small indicator in the side panel header showing the number of active memories (e.g., "12 memories"). Clicking it opens the memory manager in the options page.
 9. **Handle memory conflicts**: If extraction produces a memory that contradicts an existing one (e.g., "User prefers Python" vs. existing "User prefers TypeScript"), update the existing memory rather than creating a duplicate. Use a simple string similarity check on content.
+10. **Optional: Vector embedding for semantic recall**: Add an optional embedding-based retrieval path. When an embedding provider is configured (local model via Ollama's embedding endpoint, or an API like OpenAI's `text-embedding-3-small`), compute an embedding for each memory at extraction time and store it in the `embedding` field. At query time, embed the user's message and retrieve the top-k memories by cosine similarity instead of text match. This enables recall of semantically related memories even when keywords don't overlap. Fall back to text-match search when no embedding provider is configured.
 
 ## Dependencies
 
